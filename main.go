@@ -15,8 +15,7 @@ const (
 	APPSECRET = ""
 	MAX_LEN   = 255
 
-	UPDATECMD  = "alfred-youdao:update"
-	QUEUE_SIZE = 20 // Size of the unique queue
+	UPDATECMD = "alfred-youdao:update"
 )
 
 func init() {
@@ -46,8 +45,6 @@ func main() {
 		AppSecret: appKey,
 	}
 	agent := newAgent(client)
-	// q, from, to, lang := parseArgs(os.Args)
-
 	q, from, to, lang := parseArgs(os.Args)
 
 	if lang {
@@ -175,13 +172,6 @@ func main() {
 				})
 
 			}
-			// items.Append(&alfred.ResultElement{
-			// 	Valid:    true,
-			// 	Title:    elem.Key,
-			// 	Subtitle: strings.Join(elem.Value, "; "),
-			// 	Arg:      elem.Key,
-			// 	Mods:     mod,
-			// })
 		}
 	}
 
