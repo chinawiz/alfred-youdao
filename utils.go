@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/zgs225/alfred-youdao/alfred"
 	"github.com/zgs225/youdao"
@@ -79,13 +80,31 @@ func copyModElementMap(m map[string]*alfred.ModElement) map[string]*alfred.ModEl
 	return m2
 }
 
-func wordsToSayCmdOption(q string, r *youdao.Result) string {
+// FIXED: Output the voice of the original query if the to_language is Chinese.
+// TODO:
+// (1) In some translation, the output is mixed with eng and chinese. Perhaps we need to
+// split the eng and chinese with its corresponding "-l %s %s". And if the output is ja,
+// we need to bypass this split. (done!)
+// (2) When from_lan is chinese, the subtitles will be rather output for 网络释义. (done!)
+
+// func wordsToSayCmdOption(q string, r *youdao.Result) string {
+func wordsToSayCmdOption(result string, query string, r *youdao.Result) string {
 	ls := strings.Split(r.L, "2")
 	if len(ls) >= 2 {
-		l := languageToSayLanguage(ls[1])
-		return fmt.Sprintf("-l %s %s", l, q)
+		l_from := languageToSayLanguage(ls[0])
+		l_to := languageToSayLanguage(ls[1])
+		if l_to == "zh_CN" {
+			return fmt.Sprintf("-l %s %s", l_from, query)
+		} else {
+			if l_to != "ja_JP" {
+				result_filtered := eliminateChinese(result)
+				return fmt.Sprintf("-l %s %s", l_to, result_filtered)
+			} else {
+				return fmt.Sprintf("-l %s %s", l_to, result)
+			}
+		}
 	}
-	return q
+	return result
 }
 
 func languageToSayLanguage(l string) string {
@@ -94,7 +113,7 @@ func languageToSayLanguage(l string) string {
 		return "zh_CN"
 	case "ja":
 		return "ja_JP"
-	case "EN":
+	case "en":
 		return "en_US"
 	case "ko":
 		return "ko_KR"
@@ -109,4 +128,41 @@ func languageToSayLanguage(l string) string {
 	default:
 		return l
 	}
+}
+
+func eliminateChinese(result string) string {
+	var result_filtered string
+	result_rune := []rune(result)
+	cn_char := make([]int, 0, len(result_rune))
+	for i, c := range result_rune {
+		// eliminate chinese and non-space symbols
+		if !unicode.Is(unicode.Scripts["Han"], c) && (unicode.IsLetter(c) || unicode.IsSpace(c) || string(c) == ";") {
+			cn_char = append(cn_char, i)
+		}
+	}
+	for _, i := range cn_char {
+		for k, _ := range result_rune {
+			if k == i {
+				result_filtered += string(result_rune[i])
+			}
+		}
+	}
+	return result_filtered
+}
+
+func containChinese(result string) bool {
+	result_rune := []rune(result)
+	for _, c := range result_rune {
+		if unicode.Is(unicode.Scripts["Han"], c) {
+			return true
+		}
+	}
+	return false
+}
+
+func reverseSlice(s []string) []string {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+	return s
 }

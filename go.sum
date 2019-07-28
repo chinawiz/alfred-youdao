@@ -1,0 +1,8 @@
+github.com/AceDarkknight/AlgorithmAndDataStructure v0.0.0-20180428131513-5389b976d25a h1:BvauUnkqaNBWfGULPXXla4IO2ghXmIW5eRlAO268lzk=
+github.com/AceDarkknight/AlgorithmAndDataStructure v0.0.0-20180428131513-5389b976d25a/go.mod h1:7leFupCfVfqLTf+HxmEE3MpaWZGC5MRt0tSDvOzTtwc=
+github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
+github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
+github.com/zgs225/alfred-youdao v1.5.2 h1:j/ajGwdEai8dFN3cteID4noiNsKx0ETzS3BcVKpsgnY=
+github.com/zgs225/alfred-youdao v1.5.2/go.mod h1:ACMHz5v4I6m+/5Q7s8N3ePsi3pmzPZfNq7QQx4jrKAo=
+github.com/zgs225/youdao v0.0.0-20171201074219-ca89ae855b7c h1:Yfx649I+pzP7lMtzCHcWzvMm+m5MP1x6puI1mGaRy/4=
+github.com/zgs225/youdao v0.0.0-20171201074219-ca89ae855b7c/go.mod h1:rih1RGj2tv0E/hVuXT3ajcQgd93FBIFmvxeJCM/PF8Q=

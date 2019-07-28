@@ -15,7 +15,8 @@ const (
 	APPSECRET = ""
 	MAX_LEN   = 255
 
-	UPDATECMD = "alfred-youdao:update"
+	UPDATECMD  = "alfred-youdao:update"
+	QUEUE_SIZE = 20 // Size of the unique queue
 )
 
 func init() {
@@ -45,6 +46,8 @@ func main() {
 		AppSecret: appKey,
 	}
 	agent := newAgent(client)
+	// q, from, to, lang := parseArgs(os.Args)
+
 	q, from, to, lang := parseArgs(os.Args)
 
 	if lang {
@@ -102,7 +105,7 @@ func main() {
 			mod2 := copyModElementMap(mod)
 			mod2[alfred.Mods_Cmd] = &alfred.ModElement{
 				Valid:    true,
-				Arg:      wordsToSayCmdOption(title, r),
+				Arg:      wordsToSayCmdOption(title, q, r),
 				Subtitle: "发音",
 			}
 			item := alfred.ResultElement{
@@ -113,6 +116,7 @@ func main() {
 				Mods:     mod2,
 			}
 			items.Append(&item)
+
 		}
 	}
 
@@ -121,7 +125,7 @@ func main() {
 		mod2 := copyModElementMap(mod)
 		mod2[alfred.Mods_Cmd] = &alfred.ModElement{
 			Valid:    true,
-			Arg:      wordsToSayCmdOption(title, r),
+			Arg:      wordsToSayCmdOption(title, q, r),
 			Subtitle: "发音",
 		}
 		item := alfred.ResultElement{
@@ -144,17 +148,40 @@ func main() {
 		for _, elem := range *r.Web {
 			mod2 := copyModElementMap(mod)
 			mod2[alfred.Mods_Cmd] = &alfred.ModElement{
-				Valid:    true,
-				Arg:      wordsToSayCmdOption(elem.Key, r),
+				Valid: true,
+				// Arg:      wordsToSayCmdOption(elem.Key, q, r),
+				Arg:      wordsToSayCmdOption(strings.Join(elem.Value, "; "), q, r),
 				Subtitle: "发音",
 			}
-			items.Append(&alfred.ResultElement{
-				Valid:    true,
-				Title:    elem.Key,
-				Subtitle: strings.Join(elem.Value, "; "),
-				Arg:      elem.Key,
-				Mods:     mod,
-			})
+			ls := strings.Split(r.L, "2")
+			l_from := languageToSayLanguage(ls[0])
+			if l_from == "zh_CN" {
+				items.Append(&alfred.ResultElement{
+					Valid:    true,
+					Title:    elem.Key,
+					Subtitle: strings.Join(elem.Value, "; "),
+					Arg:      elem.Key,
+					Mods:     mod2,
+					// QuickLookUrl: toYoudaoDictUrl(q),
+				})
+			} else {
+				items.Append(&alfred.ResultElement{
+					Valid:    true,
+					Title:    elem.Key,
+					Subtitle: strings.Join(elem.Value, "; "),
+					Arg:      elem.Key,
+					Mods:     mod,
+					// QuickLookUrl: toYoudaoDictUrl(q),
+				})
+
+			}
+			// items.Append(&alfred.ResultElement{
+			// 	Valid:    true,
+			// 	Title:    elem.Key,
+			// 	Subtitle: strings.Join(elem.Value, "; "),
+			// 	Arg:      elem.Key,
+			// 	Mods:     mod,
+			// })
 		}
 	}
 

@@ -43,6 +43,11 @@ Youdao Dict for Alfred.
 
 ## CHANGELOG
 
+### 1.5.3
+
++ 修改查询中文翻译发音为中文原文的Bug，并修改其他相关语音逻辑 
+（使用OniReimu 发音部分的代码修改完成，没有添加历史记录功能）
+
 ### 1.5.2
 
 + 自定义有道API Key 和 Secret
